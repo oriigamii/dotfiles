@@ -1,0 +1,109 @@
+set number
+
+set autowrite
+set nocursorline
+set nowritebackup
+set whichwrap+=<,>,h,l,[,] " Wrap arrow keys between lines
+set t_Co=256
+set cursorline
+set autochdir
+
+autocmd! bufwritepost .vimrc source ~/.vimrc
+
+" keyboard shortcuts
+inoremap nm <ESC>
+imap nm <ESC>
+cmap nm <ESC>
+nmap nm <ESC>
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
+
+" netrw
+let g:NetrwIsOpen=0
+
+function! ToggleNetrw()
+    if g:NetrwIsOpen
+        let i = bufnr("$")
+        while (i >= 1)
+            if (getbufvar(i, "&filetype") == "netrw")
+                silent exe "bwipeout " . i
+            endif
+            let i-=1
+        endwhile
+        let g:NetrwIsOpen=0
+    else
+        let g:NetrwIsOpen=1
+        silent Lexplore
+    endif
+  endfunction
+nmap <leader>f :call ToggleNetrw()<CR>
+nmap <leader><s-f> :edit.<CR>
+let g:netrw_dirhistmax = 0
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+" augroup ProjectDrawer
+"   autocmd!
+"   autocmd VimEnter * :Vexplore
+" augroup END
+
+" highlight search
+"set hlsearch
+"nmap <leader>hl :let @/ = ""<CR>
+set background=light
+" gui settings
+if (&t_Co == 256 || has('gui_running'))
+    colorscheme zenburn
+    " colorscheme desert
+endif
+
+" stop line highlight
+"
+hi clear CursorLine
+augroup CLClear
+    autocmd! ColorScheme * hi clear CursorLine
+augroup END
+
+" highlight line number
+"
+hi CursorLineNR cterm=bold
+augroup CLNRSet
+    autocmd! ColorScheme * hi CursorLineNR cterm=bold
+augroup END
+
+" Disambiguate ,a & ,t from the Align plugin, making them fast again.
+"
+" This section is here to prevent AlignMaps from adding a bunch of mappings
+" that interfere with the very-common ,a and ,t mappings. This will get run
+" at every startup to remove the AlignMaps for the *next* vim startup.
+"
+" If you do want the AlignMaps mappings, remove this section, remove
+" ~/.vim/bundle/Align, and re-run rake in maximum-awesome.
+function! s:RemoveConflictingAlignMaps()
+  if exists("g:loaded_AlignMapsPlugin")
+    AlignMapsClean
+  endif
+endfunction
+command! -nargs=0 RemoveConflictingAlignMaps call s:RemoveConflictingAlignMaps()
+silent! autocmd VimEnter * RemoveConflictingAlignMaps
+
+" Plugins
+"
+call plug#begin('~/.vim/plugged')
+Plug 'tidalcycles/vim-tidal'
+Plug '~/.fzf'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'tpope/vim-commentary'
+Plug 'majutsushi/tagbar'
+Plug 'davidhalter/jedi-vim'
+call plug#end()
+
+let g:airline_theme='distinguished'
+let g:airline_powerline_fonts = 1
+let g:airline_skip_empty_sections = 1
+let g:airline#extensions#tabline#enabled = 0
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#formatter = 'unique_tail'

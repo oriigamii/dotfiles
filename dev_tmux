@@ -1,0 +1,13 @@
+#!/bin/sh
+
+tmux start-server
+
+tmux new-session -A -s tomi -d
+tmux source-file /home/tomi/.tmux.conf
+
+tmux split-window -h -p 35
+tmux split-window -v
+tmux selectp -t 0
+
+
+tmux attach-session -d

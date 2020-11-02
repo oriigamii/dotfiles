@@ -1,8 +1,13 @@
 #!/bin/sh
+if [ -z "$1" ]
+  then session="tomi"
+else
+  session=$1
+fi
 
 tmux start-server
 
-tmux new-session -A -s tomi -d
+tmux new-session -A -s $session -d
 tmux source-file /home/tomi/.tmux.conf
 
 tmux split-window -h -p 35
